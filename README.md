@@ -54,47 +54,6 @@ python app.py
 
 The application will be available at `http://localhost:8080`
 
-## Deployment
-
-1. Build and push the container:
-```bash
-gcloud builds submit --tag gcr.io/metalradio/blackmetalradio
-```
-
-2. Deploy to Cloud Run:
-```bash
-gcloud run deploy blackmetalradio \
-  --image gcr.io/metalradio/blackmetalradio \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
-```
-
-## Project Structure
-
-```
-blackmetalradio/
-├── app.py              # Main application file
-├── bands.csv           # List of black metal bands
-├── Dockerfile          # Container configuration
-├── requirements.txt    # Python dependencies
-├── templates/          # HTML templates
-│   └── index.html     # Main page template
-└── README.md          # This file
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Acknowledgments
 
 - The black metal community
