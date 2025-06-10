@@ -1,13 +1,12 @@
 # Black Metal Radio
 
-A web application that randomly selects black metal bands and plays their music through YouTube integration. Built with Flask and deployed on Google Cloud Run.
+A web application that randomly selects black metal bands from a curated list and plays their music through YouTube integration.
 
 ## Features
 
 - Random black metal band selection from a curated list
 - YouTube video integration for each band
 - Clean, minimalist dark interface
-- Serverless deployment on Google Cloud Run
 
 ## Tech Stack
 
