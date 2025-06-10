@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Necrostatic Radio</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+        }
+        #playButton {
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #666;
+            padding: 1rem 3rem;
+            font-size: 3.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            transform: rotate(180deg);
+        }
+        #playButton:hover {
+            background-color: #444;
+            border-color: #888;
+        }
+        #result {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+        }
+        #videoFrame {
+            margin-top: 2rem;
+            max-width: 100%;
+        }
+        .instructions {
+            margin-top: 2rem;
+            font-size: 1rem;
+            color: #888;
+            font-style: italic;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Necrostatic Radio</h1>
+        <button id="playButton">✝</button>
+        <div class="instructions">
+            Press the button to play.<br>
+            If something is broken press it again.<br>
+            If you hate what you hear press the button to change it.
+        </div>
+        <div id="result"></div>
+        <div id="videoFrame"></div>
+    </div>
+
+    <script>
+        let currentVideoId = null;
+        let player = null;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                playNextVideo();
+            }
+        }
+
+        async function playNextVideo() {
+            const button = document.getElementById('playButton');
+            const result = document.getElementById('result');
+            const videoFrame = document.getElementById('videoFrame');
+            
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/play');
+                const data = await response.json();
+                
+                result.textContent = `Now playing: ${data.band}`;
+                
+                if (data.video_url) {
+                    const videoId = data.video_url.split('v=')[1];
+                    currentVideoId = videoId;
+                    videoFrame.innerHTML = `
+                        <iframe 
+                            id="player"
+                            width="560" 
+                            height="315" 
+                            src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&enablejsapi=1" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    `;
+                }
+            } catch (error) {
+                result.textContent = 'Error occurred. Please try again.';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        document.getElementById('playButton').addEventListener('click', playNextVideo);
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html> 
