@@ -17,7 +17,10 @@ def get_random_band():
     try:
         logger.info("Attempting to read bands.csv")
         with open('bands.csv', 'r', encoding='utf-8') as file:
-            bands = [line.strip() for line in file if line.strip()]
+            # Read the first line and split by comma
+            bands = file.readline().strip().split(',')
+            # Filter out any empty strings
+            bands = [band.strip() for band in bands if band.strip()]
             logger.info(f"Successfully read {len(bands)} bands from file")
             return random.choice(bands)
     except Exception as e:
@@ -68,6 +71,17 @@ def play():
 @app.route('/health')
 def health():
     return jsonify({'status': 'healthy'})
+
+@app.route('/count')
+def count_bands():
+    try:
+        with open('bands.csv', 'r', encoding='utf-8') as file:
+            bands = file.readline().strip().split(',')
+            bands = [band.strip() for band in bands if band.strip()]
+            return jsonify({'total_bands': len(bands)})
+    except Exception as e:
+        logger.error(f"Error counting bands: {e}")
+        return jsonify({'error': 'Error counting bands'}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

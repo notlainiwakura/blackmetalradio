@@ -66,7 +66,9 @@
         <div class="instructions">
             Press the button to play.<br>
             If something is broken press it again.<br>
-            If you hate what you hear press the button to change it.
+            If you hate what you hear press the button to change it.<br>
+            There are 41,796 bands on this frequency. Some are more true that others.<br>
+            Each of the bands has equal opportunity to be heard when you press the button.
         </div>
         <div id="result"></div>
         <div id="videoFrame"></div>
@@ -77,7 +79,24 @@
         let player = null;
 
         function onYouTubeIframeAPIReady() {
+            // This function is called automatically by the YouTube IFrame API
+            console.log('YouTube IFrame API is ready');
+        }
+
+        function createPlayer(videoId) {
+            if (player) {
+                player.destroy();
+            }
+            
             player = new YT.Player('player', {
+                height: '315',
+                width: '560',
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 1,
+                    'mute': 0,
+                    'enablejsapi': 1
+                },
                 events: {
                     'onStateChange': onPlayerStateChange
                 }
@@ -106,19 +125,17 @@
                 if (data.video_url) {
                     const videoId = data.video_url.split('v=')[1];
                     currentVideoId = videoId;
-                    videoFrame.innerHTML = `
-                        <iframe 
-                            id="player"
-                            width="560" 
-                            height="315" 
-                            src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&enablejsapi=1" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>
-                    `;
+                    
+                    // Create a container for the player if it doesn't exist
+                    if (!document.getElementById('player')) {
+                        videoFrame.innerHTML = '<div id="player"></div>';
+                    }
+                    
+                    // Create or update the player
+                    createPlayer(videoId);
                 }
             } catch (error) {
+                console.error('Error:', error);
                 result.textContent = 'Error occurred. Please try again.';
             } finally {
                 button.disabled = false;
